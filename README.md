@@ -46,6 +46,11 @@ python train_model.py
 
 ## 🧪 Executando Localmente
 
+Acesse a pasta 'api'
+
+```
+cd api
+```
 Inicie o servidor Flask:
 
 ```bash
@@ -57,5 +62,9 @@ Abra no navegador:
 ```
 http://localhost:5000
 ```
-
 ---
+## Deploy no Render
+
+O deploy no render precisa de 50segs para iniciar. 
+https://autou-vclb.onrender.com
+
