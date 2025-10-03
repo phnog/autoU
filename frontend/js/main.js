@@ -2,6 +2,7 @@ const switchEl = document.getElementById("modeSwitch");
 const titleGroup = document.getElementById("titleGroup");
 const fileGroup = document.getElementById("fileGroup");
 const textGroup = document.getElementById("textGroup");
+
 const fileInput = document.getElementById("fileInput");
 const titleInput = document.getElementById("titleInput");
 const textInput = document.getElementById("textInput");
@@ -30,6 +31,8 @@ document.getElementById("emailForm").addEventListener("submit", async (e) => {
   loading.classList.remove("d-none");
 
   const formData = new FormData();
+  let displayTitle = "";
+
   if (switchEl.checked) {
     if (!fileInput.files[0]) {
       alert("Selecione um arquivo antes de enviar.");
@@ -37,6 +40,7 @@ document.getElementById("emailForm").addEventListener("submit", async (e) => {
       return;
     }
     formData.append("emailFile", fileInput.files[0]);
+    displayTitle = fileInput.files[0].name;
   } else {
     const title = titleInput.value.trim();
     const body = textInput.value.trim();
@@ -52,6 +56,7 @@ document.getElementById("emailForm").addEventListener("submit", async (e) => {
     }
     formData.append("emailTitle", title);
     formData.append("emailText", body);
+    displayTitle = title;
   }
 
   try {
@@ -71,30 +76,64 @@ document.getElementById("emailForm").addEventListener("submit", async (e) => {
 
     const tag = document.createElement("span");
     tag.classList.add("result-tag");
-    tag.textContent = data.categoria;
-    if (data.categoria === "Produtivo") {
+    tag.textContent = data.categoria.toUpperCase();
+
+    if (data.categoria.toLowerCase() === "produtivo") {
       tag.classList.add("produtivo");
     } else {
       tag.classList.add("improdutivo");
     }
 
-    const title = document.createElement("span");
-    title.textContent = data.filename;
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = displayTitle || "Sem título";
 
     linha.appendChild(tag);
-    linha.appendChild(title);
+    linha.appendChild(titleSpan);
     li.appendChild(linha);
 
     if (data.resposta && data.resposta.trim() !== "") {
       const resposta = document.createElement("div");
       resposta.classList.add("resposta-sugerida");
-      resposta.innerHTML = `<em>Resposta sugerida:</em><br><strong>${data.resposta}</strong>`;
+
+      // Container flexível para alinhar botão e texto
+      const container = document.createElement("div");
+      container.classList.add("d-flex", "align-items-start", "gap-3");
+
+      // Botão de copiar (vai ficar à esquerda)
+      const copyBtn = document.createElement("button");
+      copyBtn.textContent = "📋 Copiar";
+      copyBtn.classList.add("btn", "btn-sm", "btn-outline-success");
+
+      // Texto da resposta
+      const texto = document.createElement("div");
+      texto.innerHTML = `<em>Resposta sugerida:</em><br><strong>${data.resposta}</strong>`;
+
+      // Adicionar ao container
+      container.appendChild(copyBtn);
+      container.appendChild(texto);
+      resposta.appendChild(container);
+
+      // Evento de cópia
+      copyBtn.addEventListener("click", async (e) => {
+        e.stopPropagation(); // evita abrir/fechar ao clicar no botão
+        try {
+          await navigator.clipboard.writeText(data.resposta);
+          copyBtn.textContent = "✅ Copiado!";
+          setTimeout(() => (copyBtn.textContent = "📋 Copiar"), 2000);
+        } catch (err) {
+          console.error("Erro ao copiar:", err);
+          alert("Não foi possível copiar o texto.");
+        }
+      });
+
       resposta.style.display = "none";
       li.appendChild(resposta);
 
-      li.addEventListener("click", () => {
-        resposta.style.display =
-          resposta.style.display === "none" ? "block" : "none";
+      li.addEventListener("click", (e) => {
+        if (e.target !== copyBtn) {
+          resposta.style.display =
+            resposta.style.display === "none" ? "block" : "none";
+        }
       });
     }
 
