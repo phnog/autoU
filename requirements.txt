@@ -1,4 +1,5 @@
 python-dotenv
+flask
 langchain
 langchain-core
 langchain-community
@@ -7,3 +8,6 @@ pydantic
 typing-extensions
 PyMuPDF
 faiss-cpu
+requests
+gunicorn
+PyPDF2
