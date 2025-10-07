@@ -34,16 +34,6 @@ pip install -r requirements.txt
 
 ---
 
-## 🧠 Treinamento do Modelo
-
-O script `train.py` gera o arquivo `model/model.json` com as estatísticas do classificador Naive Bayes:
-
-```bash
-python train_model.py
-```
-
----
-
 ## 🧪 Executando Localmente
 
 Acesse a pasta 'api'
